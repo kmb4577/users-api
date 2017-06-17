@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :post do
-    content "MyText"
-    user nil
+    content "THIS IS MY TEST POST CONTENT."
+    #belongs_to :user
+    association :user
   end
 end
