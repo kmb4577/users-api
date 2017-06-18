@@ -104,6 +104,7 @@ RSpec.configure do |config|
 =end
   config.include FactoryGirl::Syntax::Methods
 
+    #Handles the clean up of data after each test
     config.before(:suite) do
       DatabaseCleaner.strategy = :truncation
     end

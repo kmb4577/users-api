@@ -38,6 +38,11 @@ RSpec.configuration do |config|
   # add `FactoryGirl` methods
   config.include FactoryGirl::Syntax::Methods
 
+  # The different available types are documented in the features, such as in
+  # https://relishapp.com/rspec/rspec-rails/docs
+  # Enables specs to utilize the 'get' request
+  config.infer_spec_type_from_file_location!
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
@@ -79,9 +84,7 @@ end
 #   #       # ...
 #   #     end
 #   #
-#   # The different available types are documented in the features, such as in
-#   # https://relishapp.com/rspec/rspec-rails/docs
-#   config.infer_spec_type_from_file_location!
+
 #
 #   # Filter lines from Rails gems in backtraces.
 #   config.filter_rails_from_backtrace!

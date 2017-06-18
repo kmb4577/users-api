@@ -60,7 +60,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.permit(:name, :username, :password)
+    params.permit(:name, :username, :password, :auth_token)
   end
 
   #TODO: take this method out if not needed. Change comments above also
