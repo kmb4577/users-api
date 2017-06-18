@@ -15,9 +15,6 @@ module ExceptionHandler
     rescue_from ExceptionHandler::InvalidToken, with: :four_twenty_two
     rescue_from ExceptionHandler::ExpiredSignature, with: :four_twenty_two
 
-    # rescue_from ExceptionHandler::ExpiredSignature do |e|
-    #   json_response({ message: e.message }, :expired_user_token)
-    # end
 
     rescue_from ActiveRecord::RecordNotFound do |e|
       json_response({ message: e.message }, :not_found)

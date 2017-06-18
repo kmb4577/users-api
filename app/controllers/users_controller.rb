@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  # skip_before_action :authorize_request, only: :signup
   before_action :set_current_user, only: [:show, :update, :destroy]
 
   ##
@@ -12,6 +13,14 @@ class UsersController < ApplicationController
     @user = User.create!(user_params)
     #TODO: Add check to make sure user is valid before calling create!
     json_response(@user, :created)
+  end
+
+
+  def signup
+    user = User.create!(user_params)
+    auth_token = AuthenticateUser.new(user.username, user.password).call
+    response = { message: Message.account_created, auth_token: auth_token }
+    json_response(response, :created)
   end
 
   ##
@@ -60,7 +69,7 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.permit(:name, :username, :password, :auth_token)
+    params.permit(:name, :username, :password, :password_confirmation)#, :auth_token
   end
 
   #TODO: take this method out if not needed. Change comments above also

@@ -10,11 +10,14 @@ RSpec.describe User, type: :model do
   it { should validate_presence_of(:name)}
   it { should validate_presence_of(:username)}
   it { should validate_presence_of(:password)}
-  it { should validate_presence_of(:auth_token)}
+  it { should validate_presence_of(:password_digest) }
 
-  it { should validate_uniqueness_of(:auth_token)}
-  #TODO check the following tests meaning
-  it { should respond_to(:auth_token) }
+
+  # it { should validate_presence_of(:auth_token)}
+  #
+  # it { should validate_uniqueness_of(:auth_token)}
+  # #TODO check the following tests meaning
+  # it { should respond_to(:auth_token) }
   #TODO: Add more tests for this
   # #No user can have the same username and password
   # validates_uniqueness_of :username, scope: [:password]

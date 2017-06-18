@@ -53,7 +53,7 @@ RSpec.describe 'Users API', type: :request do
   # Test suite for POST /users
   describe 'POST /users' do
     # valid payload
-    let(:valid_attributes) { { name: 'Learn Elm', username: 'username', password: 'password', auth_token: 'auth_token' } }
+    let(:valid_attributes) { { name: 'Learn Elm', username: 'username', password: 'password' } }#, auth_token: 'auth_token'
 
     context 'when the request is valid' do
       before { post '/users', params: valid_attributes }
@@ -62,9 +62,9 @@ RSpec.describe 'Users API', type: :request do
         expect(JSON.parse(response.body)['name']).to eq('Learn Elm')
         expect(JSON.parse(response.body)['username']).to eq('username')
         expect(JSON.parse(response.body)['password']).to eq('password')
-        #Auth_token is randomly generated so this test should now be aware of it's
-        #value.
-        expect(JSON.parse(response.body)['auth_token']).to_not be_blank
+        # #Auth_token is randomly generated so this test should now be aware of it's
+        # #value.
+        # expect(JSON.parse(response.body)['auth_token']).to_not be_blank
       end
 
       it 'returns status code 201' do
@@ -95,16 +95,13 @@ RSpec.describe 'Users API', type: :request do
       #       .to match(/Validation failed: Name by can't be blank/)
       # end
 
-      # it 'returns a validation failure message for missing auth_token' do
-      #   expect(response.body)
-      #       .to match(/Validation failed: Name by can't be blank/)
-      # end
+
     end
   end
 
   # Test suite for PUT /users/:id
   describe 'PUT /users/:id' do
-    let(:valid_attributes) { { name: 'Learn Elm', username: 'username', password: 'password', auth_token: 'auth_token' } }
+    let(:valid_attributes) { { name: 'Learn Elm', username: 'username', password: 'password' } }#, auth_token: 'auth_token'
 
     context 'when the record exists' do
       before { put "/users/#{user_id}", params: valid_attributes }
@@ -125,6 +122,50 @@ RSpec.describe 'Users API', type: :request do
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
+    end
+  end
+
+
+
+
+
+
+
+  # User signup test suite
+  describe 'POST /signup' do
+    let(:user) { build(:user) }
+    let(:headers) { valid_headers.except('Authorization') }
+    let(:valid_attributes) do
+      attributes_for(:user, password: user.password, password_confirmation: user.password)
+    end
+    context 'when valid request' do
+      before { post '/signup', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a new user' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'returns success message' do
+        # puts JSON.parse(response.body).inspect
+        expect(JSON.parse(response.body)['message']).to match(/Account created successfully/)
+      end
+
+      it 'returns an authentication token' do
+        expect(JSON.parse(response.body)['auth_token']).not_to be_nil
+      end
+    end
+
+    context 'when invalid request' do
+      before { post '/signup', params: {}, headers: headers }
+
+      it 'does not create a new user' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns failure message' do
+        expect(JSON.parse(response.body)['message'])
+            .to match(/Validation failed: Password can't be blank, Name can't be blank, Username can't be blank, Password digest can't be blank/)
+      end
     end
   end
 end

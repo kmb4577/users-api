@@ -4,6 +4,8 @@
 #
 # Both encode and decode class methods utilize the unique secret key in the application
 # in order to sign user tokens.
+#
+# JWT is used to manage the application's valid web tokens
 class JsonWebToken
   # secret to encode and decode token
   HMAC_SECRET = Rails.application.secrets.secret_key_base
