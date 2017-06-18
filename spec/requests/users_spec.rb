@@ -1,20 +1,26 @@
 require 'rails_helper'
 
+# include the autherization headers in each request
 RSpec.describe 'Users API', type: :request do
+#   # add todos owner
+#   let(:user) { create(:user) }
+
   let!(:user_1) { FactoryGirl.create(:user)}
   let!(:user_2) { FactoryGirl.create(:user)}
+  let!(:user) { FactoryGirl.create(:user)}
   let!(:users) { [user_1, user_2] }
   # let!(:users) { create_list(:user, 5) }
   let(:user_id) { users.first.id }
+  let(:headers) { valid_headers }
 
   # Test suite for GET /users
   describe 'GET /users' do
     # make HTTP get request before each example
-    before { get '/users' }
+    before { get '/users', params: {}, headers: headers }
 
     it 'returns users' do
       expect(JSON.parse(response.body)).not_to be_empty
-      expect(JSON.parse(response.body).size).to eq(2)
+      expect(JSON.parse(response.body).size).to eq(3)
     end
 
     # it 'returns HTTP status code 200' do
@@ -24,7 +30,7 @@ RSpec.describe 'Users API', type: :request do
 
   # Test suite for GET /users/:id
   describe 'GET /users/:id' do
-    before { get "/users/#{user_id}" }
+    before { get "/users/#{user_id}", params: {}, headers: headers }
 
     context 'when the record exists' do
       it 'returns the user' do
@@ -52,11 +58,13 @@ RSpec.describe 'Users API', type: :request do
 
   # Test suite for POST /users
   describe 'POST /users' do
-    # valid payload
-    let(:valid_attributes) { { name: 'Learn Elm', username: 'username', password: 'password' } }#, auth_token: 'auth_token'
+    # valid json payload
+    let(:valid_attributes) do
+      { name: 'Learn Elm', username: 'username', password: 'password' }.to_json
+    end
 
     context 'when the request is valid' do
-      before { post '/users', params: valid_attributes }
+      before { post '/users', params: valid_attributes, headers: headers }
 
       it 'creates a user' do
         expect(JSON.parse(response.body)['name']).to eq('Learn Elm')
@@ -72,39 +80,43 @@ RSpec.describe 'Users API', type: :request do
       end
     end
 
-    context 'when the request is invalid' do
-      before { post '/users', params: { name: 'Foobar' } }
 
-      it 'returns status code 422' do
-        expect(response).to have_http_status(422)
-      end
-
-      #TODO: The following tests
-      # it 'returns a validation failure message for missing name' do
-      #   expect(response.body)
-      #       .to match(/Validation failed: Name by can't be blank/)
-      # end
-
-      # it 'returns a validation failure message for missing username' do
-      #   expect(response.body)
-      #       .to match(/Validation failed: Name by can't be blank/)
-      # end
-
-      # it 'returns a validation failure message for missing password' do
-      #   expect(response.body)
-      #       .to match(/Validation failed: Name by can't be blank/)
-      # end
-
-
-    end
+    #   context 'when request is invalid' do
+    #     let(:valid_attributes) { { title: nil }.to_json }
+    #     before { post '/todos', params: valid_attributes, headers: headers }
+    #     # [...]
+    #   end
+    # context 'when the request is invalid' do
+    #   before { post '/users', params: { name: 'Foobar' } }
+    #
+    #   it 'returns status code 422' do
+    #     expect(response).to have_http_status(422)
+    #   end
+    #
+    #   #TODO: The following tests
+    #   # it 'returns a validation failure message for missing name' do
+    #   #   expect(response.body)
+    #   #       .to match(/Validation failed: Name by can't be blank/)
+    #   # end
+    #
+    #   # it 'returns a validation failure message for missing username' do
+    #   #   expect(response.body)
+    #   #       .to match(/Validation failed: Name by can't be blank/)
+    #   # end
+    #
+    #   # it 'returns a validation failure message for missing password' do
+    #   #   expect(response.body)
+    #   #       .to match(/Validation failed: Name by can't be blank/)
+    #   # end
+    # end
   end
 
   # Test suite for PUT /users/:id
   describe 'PUT /users/:id' do
-    let(:valid_attributes) { { name: 'Learn Elm', username: 'username', password: 'password' } }#, auth_token: 'auth_token'
+    let(:valid_attributes) { { name: 'Learn Elm', username: 'username', password: 'password' }.to_json }#, auth_token: 'auth_token'
 
     context 'when the record exists' do
-      before { put "/users/#{user_id}", params: valid_attributes }
+      before { put "/users/#{user_id}", params: valid_attributes, headers: headers }
 
       it 'updates the record' do
         expect(response.body).to be_empty
@@ -118,7 +130,7 @@ RSpec.describe 'Users API', type: :request do
 
   # Test suite for DELETE /users/:id
   describe 'DELETE /users/:id' do
-    before { delete "/users/#{user_id}" }
+    before { delete "/users/#{user_id}", params: {}, headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
