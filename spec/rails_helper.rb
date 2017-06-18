@@ -32,9 +32,13 @@ require 'spec_helper'
 # require 'database_cleaner'
 
 
+
 # [...]
 RSpec.configuration do |config|
-  # [...]
+  #Include RequestSpecHelper & ControllerSpecHelper for all spec types
+  # config.include RequestSpecHelper
+  # config.include ControllerSpecHelper
+
   # add `FactoryGirl` methods
   config.include FactoryGirl::Syntax::Methods
 
@@ -48,7 +52,6 @@ RSpec.configuration do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
-  config.include RequestSpecHelper, type: :request
 
   # start by truncating all the tables but then use the faster transaction strategy the rest of the time.
   config.before(:suite) do

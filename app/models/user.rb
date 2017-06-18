@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  # has_secure_password
+
   has_many :posts, dependent: :destroy
   validates_presence_of :name, :username, :password, :auth_token
   validates_uniqueness_of :auth_token
@@ -11,7 +13,20 @@ class User < ApplicationRecord
   before_create :generate_auth_token!
 
 
+  def authenticate(unencrypted_password)
+    BCrypt::Password.new(cur_password).is_password?(unencrypted_password) && self
+  end
 
+
+  def cur_password=(unencrypted_password)
+    if unencrypted_password.nil?
+      self.password = nil
+    elsif !unencrypted_password.empty?
+      @password = unencrypted_password
+      cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST : BCrypt::Engine.cost
+      self.password = BCrypt::Password.create(unencrypted_password, cost: cost)
+    end
+  end
 
   private
 
