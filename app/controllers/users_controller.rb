@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  # skip_before_action :authorize_request, only: :signup
+  skip_before_action :authorize_request, only: :signup
   before_action :set_current_user, only: [:show, :update, :destroy]
 
   ##
