@@ -2,17 +2,17 @@ require 'rails_helper'
 
 RSpec.describe AuthorizeApiRequest, type: :auth do
   let(:user) { create(:user) }
-  ##TODO Mock `Authorization` header
+  #Mock `Authorization` header
   let(:header) { { 'Authorization' => token_generator(user.id) } }
-  ##TODO  Invalid request subject
+  #Invalid request subject
   subject(:invalid_request_obj) { described_class.new({}) }
-  ##TODO  Valid request subject
+  #Valid request subject
   subject(:request_obj) { described_class.new(header) }
 
-  ##TODO  Test Suite for AuthorizeApiRequest#call
-  ##TODO  This is our entry point into the service class
+  #Test Suite for AuthorizeApiRequest#call
+  #Entry point into the service class
   describe '#call' do
-    ##TODO  returns user object when request is valid
+    # returns user object when request is valid
     context 'when valid request' do
       it 'returns user object' do
         result = request_obj.call
@@ -20,7 +20,7 @@ RSpec.describe AuthorizeApiRequest, type: :auth do
       end
     end
 
-    ##TODO  returns error message when invalid request
+    #returns error message when invalid request
     context 'when invalid request' do
       context 'when missing token' do
         it 'raises a MissingToken error' do
@@ -31,7 +31,6 @@ RSpec.describe AuthorizeApiRequest, type: :auth do
 
       context 'when invalid token' do
         subject(:invalid_request_obj) do
-          ##TODO  custom helper method `token_generator`
           described_class.new('Authorization' => token_generator(5))
         end
 
@@ -46,7 +45,6 @@ RSpec.describe AuthorizeApiRequest, type: :auth do
         subject(:request_obj) { described_class.new(header) }
 
         it 'raises ExceptionHandler::ExpiredSignature error' do
-          puts request_obj.inspect
           expect { request_obj.call }
               .to raise_error(
                       ExceptionHandler::ExpiredSignature,

@@ -1,4 +1,7 @@
-#TODO: Refactor
+##
+# Singleton class that helps to manage the applications standard messages
+# for returning a message based off of the authentication responce from an
+# api request. These messages are set up so they are non-domain specific.
 class Message
   def self.not_found(record = 'record')
     "Sorry, #{record} not found."

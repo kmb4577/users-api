@@ -2,14 +2,10 @@ require 'rails_helper'
 
 # include the autherization headers in each request
 RSpec.describe 'Users API', type: :request do
-#   # add todos owner
-#   let(:user) { create(:user) }
-
   let!(:user_1) { FactoryGirl.create(:user)}
   let!(:user_2) { FactoryGirl.create(:user)}
   let!(:user) { FactoryGirl.create(:user)}
   let!(:users) { [user_1, user_2] }
-  # let!(:users) { create_list(:user, 5) }
   let(:user_id) { users.first.id }
   let(:headers) { valid_headers }
 
@@ -23,9 +19,9 @@ RSpec.describe 'Users API', type: :request do
       expect(JSON.parse(response.body).size).to eq(3)
     end
 
-    # it 'returns HTTP status code 200' do
-    #   expect(response).to have_http_status(200)
-    # end
+    it 'returns HTTP status code 200' do
+      expect(response).to have_http_status(200)
+    end
   end
 
   # Test suite for GET /users/:id
@@ -34,6 +30,7 @@ RSpec.describe 'Users API', type: :request do
 
     context 'when the record exists' do
       it 'returns the user' do
+        puts JSON.parse(response.body).inspect
         expect(JSON.parse(response.body)).not_to be_empty
         expect(JSON.parse(response.body)['id']).to eq(user_id)
       end
@@ -136,12 +133,6 @@ RSpec.describe 'Users API', type: :request do
       expect(response).to have_http_status(204)
     end
   end
-
-
-
-
-
-
 
   # User signup test suite
   describe 'POST /signup' do

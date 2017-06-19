@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  #skip authorization of the token when a user is creating a new account
   skip_before_action :authorize_request, only: :signup
   before_action :set_current_user, only: [:show, :update, :destroy]
 
@@ -7,11 +8,9 @@ class UsersController < ApplicationController
   #
   # POST /users
   def create
-    #ActiveRecord::RecordInvalid will raise if create! is invalid due to user_params passed
-    #avoid deep nested if statements in the controller.
-    # Thus, we rescue from this exception in the ExceptionHandler module.
+    # ExceptionHandler module will handle an invalid user
+    # if its invalid on create!
     @user = User.create!(user_params)
-    #TODO: Add check to make sure user is valid before calling create!
     json_response(@user, :created)
   end
 
@@ -28,7 +27,7 @@ class UsersController < ApplicationController
   #
   # GET /users
   def index
-    @users = User.all
+    @users = User.all.paginate(page: params[:page], per_page: 20)
     json_response(@users)
   end
 
@@ -40,29 +39,33 @@ class UsersController < ApplicationController
     json_response(@user)
   end
 
-
+  # ##
+  # #  A user may only edit their own account.
+  # #
   # def edit
-  #
+  #   # will only return the user if the user it attempting to edit their own account.
+  #   json_response(@user) unless current_user != @user
   # end
 
   ##
   # Update User instance
   #
+  # A user may only edit their own account.
+  #
   # PUT /users/:id
   def update
-    @user.update(user_params)
+    @user.update(user_params) unless current_user != @user
     head :no_content
   end
 
   ##
   # Deletes User instance
   #
-  # ##Only the Post owner is allowed to edit or delete their posts.
-  # ##Only the User itself can edit or delete their accounts.
+  # A user may only destroy their own user account.
   #
   # DELETE /users/:id
   def destroy
-    @user.destroy
+    @user.destroy unless current_user != @user
     head :no_content
   end
 
@@ -72,7 +75,6 @@ class UsersController < ApplicationController
     params.permit(:name, :username, :password, :password_confirmation)#, :auth_token
   end
 
-  #TODO: take this method out if not needed. Change comments above also
   def set_current_user
     @user = User.find(params[:id])
   end

@@ -1,8 +1,6 @@
 require 'rails_helper'
 
-#TODO REFACTOR WHOLE FILE
 RSpec.describe AuthenticateUser do
-  # create test user
   let(:user) { create(:user) }
   # valid request subject
   subject(:valid_auth_obj) { described_class.new(user.username, user.password) }
@@ -11,7 +9,7 @@ RSpec.describe AuthenticateUser do
 
   # Test suite for AuthenticateUser#call
   describe '#call' do
-    # return token when valid request
+    # returns a token when a valid request is made
     context 'when valid credentials' do
       it 'returns an auth token' do
         token = valid_auth_obj.call
@@ -19,7 +17,7 @@ RSpec.describe AuthenticateUser do
       end
     end
 
-    # raise Authentication Error when invalid request
+    # raises a Authentication Error when an invalid request is made
     context 'when invalid credentials' do
       it 'raises an authentication error' do
         expect { invalid_auth_obj.call }

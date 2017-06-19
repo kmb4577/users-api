@@ -33,11 +33,9 @@ class JsonWebToken
   #   token: user_token (previously set from the encode class method)
   #
   def self.decode(token)
-    ##TODO get payload; first index in decoded Array
     body = JWT.decode(token, HMAC_SECRET)[0]
     HashWithIndifferentAccess.new body
   rescue JWT::ExpiredSignature, JWT::VerificationError => e
-    ##TODO raise custom error to be handled by custom handler
     raise ExceptionHandler::ExpiredSignature, e.message
   end
 end

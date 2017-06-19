@@ -1,14 +1,16 @@
 module ExceptionHandler
   extend ActiveSupport::Concern
 
-  ##TODO Define custom error subclasses - rescue catches `StandardErrors`
+  # Define StandardError subclasses so that a
+  # rescue will catch any of the following custom errors.
   class AuthenticationError < StandardError; end
   class MissingToken < StandardError; end
   class InvalidToken < StandardError; end
   class ExpiredSignature < StandardError; end
 
   included do
-    # Custom Handlers
+    # Define responces that will be retured from each of the
+    # custom classes defined above.
     rescue_from ActiveRecord::RecordInvalid, with: :four_twenty_two
     rescue_from ExceptionHandler::AuthenticationError, with: :unauthorized_request
     rescue_from ExceptionHandler::MissingToken, with: :four_twenty_two
@@ -28,12 +30,14 @@ module ExceptionHandler
 
   private
 
-  ##TODO JSON response with message; Status code 422 - unprocessable entity
+  ##
+  # Returns a JSON responce with a 422 status code indicating an unprocessable entity.
   def four_twenty_two(e)
     json_response({ message: e.message }, :unprocessable_entity)
   end
 
-  ##TODO JSON response with message; Status code 401 - Unauthorized
+  ##
+  # Returns a JSON responce with a 401 status code indicating an Unauthorized request.
   def unauthorized_request(e)
     json_response({ message: e.message }, :unauthorized)
   end

@@ -10,7 +10,7 @@ class PostsController < ApplicationController
   #
   # Params: user_id
   def index
-    json_response(Post.all)
+    json_response(@user.posts.paginate(page: params[:page], per_page: 20))
   end
 
   ##
@@ -21,6 +21,15 @@ class PostsController < ApplicationController
   def show
     json_response(@post)
   end
+  #
+  # ##
+  # #
+  # # Only the Post owner is allowed to edit their posts.
+  # #
+  # #
+  # def edit
+  #   json_response(@post) unless !@user.posts.include?(@post)
+  # end
 
 
   def create
@@ -28,13 +37,20 @@ class PostsController < ApplicationController
     json_response(@user, :created)
   end
 
+  ##
+  #
+  # Only the Post owner is allowed to edit their posts.
+  #
   def update
-    @post.update(post_params)
+    @post.update(post_params) unless !@user.posts.include?(@post)
     head :no_content
   end
 
+  ##
+  #
+  # Only the Post owner is allowed to delete their posts.
   def destroy
-    @post.destroy
+    @post.destroy unless @user != current_user
     head :no_content
   end
 
