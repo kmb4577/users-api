@@ -33,7 +33,7 @@ class PostsController < ApplicationController
 
 
   def create
-    @user.posts.create!(post_params)
+    @user.posts.paginate(page: params[:page], per_page: 19).create!(post_params)
     json_response(@user, :created)
   end
 
